@@ -81,9 +81,7 @@ func (h *DbImplementation) UpdateProduct( updatedProduct models.DbProduct , prod
 		return errors.New("price of the product is invalid")
 	}
 
-	//if int64(product.ID) == productId {
 
-		//fmt.Println("hi",initialQuantity)
 		if updatedProduct.Price!=0{
 			product.Price=updatedProduct.Price
 		}
@@ -91,11 +89,10 @@ func (h *DbImplementation) UpdateProduct( updatedProduct models.DbProduct , prod
 			initialQuantity:=product.Quantity
 			product.Quantity = initialQuantity + updatedProduct.Quantity
 		}
-		//fmt.Println("hi",product.Quantity,updatedProduct.Quantity)
 
 		h.Db.Save(&product)
 		return nil
-	//}
+
 
 }
 
@@ -107,7 +104,6 @@ func (h *DbImplementation) DeleteProduct(productId int64) error {
 	}
 
 	h.Db.Delete(&product)
-
 	return nil
 }
 
