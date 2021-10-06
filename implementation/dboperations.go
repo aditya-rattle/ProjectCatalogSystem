@@ -2,6 +2,7 @@ package implementation
 
 import (
 	"errors"
+	"fmt"
 	"github.com/aditya/ProjectCatalog/models"
 	"github.com/jinzhu/gorm"
 )
@@ -19,6 +20,7 @@ func (h *DbImplementation) CreateProduct(product models.UserProduct) error {
 		Quantity: product.Quantity,
 		Description:product.Description,
 	}
+	fmt.Println(dbprod)
 
 	h.Db.Create(&dbprod)
 
@@ -45,8 +47,7 @@ func (h *DbImplementation) ShowProductById(productId int64) models.DbProduct {
 func (h *DbImplementation) BuyProduct(productId, productQuantity int64) error {
 	var product models.DbProduct
 	h.Db.First(&product,productId)
-	emptyProduct:=models.DbProduct{}
-	if product==emptyProduct{
+	if product.Name==""{
 		return errors.New("item not found")
 	}
 
@@ -56,7 +57,8 @@ func (h *DbImplementation) BuyProduct(productId, productQuantity int64) error {
 		return nil
 	}
 
-	return errors.New("item quantity is less than required")
+	return errors.New("item is  not sufficient to fulfil request")
+
 }
 
 
@@ -67,6 +69,10 @@ func (h *DbImplementation) UpdateProduct( updatedProduct models.DbProduct , prod
 	var product models.DbProduct
 	h.Db.First(&product,productId)
 
+	if product.Name==""{
+		return errors.New("product not found")
+	}
+
 	if updatedProduct.Quantity<0{
 		return errors.New("quantity is invalid")
 	}
@@ -75,7 +81,7 @@ func (h *DbImplementation) UpdateProduct( updatedProduct models.DbProduct , prod
 		return errors.New("price of the product is invalid")
 	}
 
-	if int64(product.ID) == productId {
+	//if int64(product.ID) == productId {
 
 		//fmt.Println("hi",initialQuantity)
 		if updatedProduct.Price!=0{
@@ -89,13 +95,17 @@ func (h *DbImplementation) UpdateProduct( updatedProduct models.DbProduct , prod
 
 		h.Db.Save(&product)
 		return nil
-	}
-	return errors.New("product not found")
+	//}
+
 }
 
 func (h *DbImplementation) DeleteProduct(productId int64) error {
 	var product models.DbProduct
 	h.Db.First(&product,productId)
+	if product.Name==""{
+		return errors.New("some error")
+	}
+
 	h.Db.Delete(&product)
 
 	return nil

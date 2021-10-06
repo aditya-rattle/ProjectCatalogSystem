@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/aditya/ProjectCatalog/models"
 	"github.com/aditya/ProjectCatalog/services"
@@ -28,6 +29,7 @@ func (h *CatalogController) CreateProduct(w http.ResponseWriter, r *http.Request
 	headerJson(w,r)
 	var newProduct models.UserProduct
 	_ = json.NewDecoder(r.Body).Decode(&newProduct)
+	fmt.Println(newProduct.Description)
 	err := h.CatalogService.CreateProduct(newProduct)
 	if err==nil{
 		json.NewEncoder(w).Encode("Product added successfully")
