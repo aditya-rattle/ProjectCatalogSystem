@@ -3,6 +3,7 @@ package implementation
 import (
 	"errors"
 	"github.com/aditya/ProjectCatalog/models"
+	"sync"
 	"time"
 )
 
@@ -13,7 +14,7 @@ type TimeStampStructure struct{
 
 type Inmemoryimplement struct{
 	ProductArr []models.InMemoryProduct
-
+	mutex sync.Mutex
 }
 var mp map[TimeStampStructure]int64
 
@@ -34,6 +35,7 @@ func min(a int64, b int64) int64{
 }
 
 func (h *Inmemoryimplement) CreateProduct(product models.InMemoryProduct) error{
+	h.mutex.Lock()
 
 	for _, prod:=range h.ProductArr{
 		if prod.Name==product.Name{
@@ -43,24 +45,29 @@ func (h *Inmemoryimplement) CreateProduct(product models.InMemoryProduct) error{
 	product.Id=int64(len(h.ProductArr)+1)
 	h.ProductArr = append(h.ProductArr,product)
 
+	h.mutex.Unlock()
 	return nil
 
 }
 
 func (h *Inmemoryimplement) ShowProducts() []models.InMemoryProduct{
+
 	return h.ProductArr
 }
 
 func (h *Inmemoryimplement) ShowProductById(productId int64) models.InMemoryProduct{
+	h.mutex.Lock()
 	for _,product:=range h.ProductArr{
 		if product.Id==productId{
 			return product
 		}
 	}
+	h.mutex.Unlock()
 	return models.InMemoryProduct{}
 }
 
 func (h *Inmemoryimplement) UpdateProduct(updatedProduct models.InMemoryProduct,productName string) error{
+	h.mutex.Lock()
 	for i,item:=range h.ProductArr{
 		if item.Name==productName{
 			updatedProduct.Id = int64(i+1)
@@ -70,10 +77,12 @@ func (h *Inmemoryimplement) UpdateProduct(updatedProduct models.InMemoryProduct,
 			return nil
 		}
 	}
+	h.mutex.Unlock()
 	return errors.New("product do not exist")
 }
 
 func (h *Inmemoryimplement) BuyProduct(productId , productQuantity int64) error{
+	h.mutex.Lock()
 	for i,item:=range h.ProductArr{
 		if item.Id==productId{
 			currCount:= item.Quantity
@@ -97,6 +106,7 @@ func (h *Inmemoryimplement) BuyProduct(productId , productQuantity int64) error{
 			return nil
 		}
 	}
+	h.mutex.Unlock()
 	return errors.New("item not available")
 }
 
