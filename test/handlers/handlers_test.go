@@ -305,6 +305,8 @@ func TestBuyProductWhenNotAvailable(t *testing.T) {
 	assert.Equal(t, 200, rr.Code)
 }
 
+
+
 func TestTop5ProductsWhenEmpty(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
