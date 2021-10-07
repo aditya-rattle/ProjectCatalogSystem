@@ -3,6 +3,7 @@ package implementation
 import (
 	"errors"
 	"github.com/aditya/ProjectCatalog/models"
+	"sort"
 	"sync"
 	"time"
 )
@@ -110,37 +111,37 @@ func (h *Inmemoryimplement) BuyProduct(productId , productQuantity int64) error{
 	return errors.New("item not available")
 }
 
-//func (h *Inmemoryimplement) TopProduct() []string{
-//	currTime:=time.Now().Unix()
-//	prodQuantity:=make([]int64,len(h.ProductArr)+1)
-//	const timeHour=3600
-//	for k,v :=range mp {
-//		if currTime-k.timeInSec<=timeHour{
-//			prodQuantity[k.prodId]+=v
-//		}
-//	}
-//
-//	productsTop:=make([][2]int64,0)
-//
-//	for ind,val:=range prodQuantity{
-//		if val>0 {
-//			arr := [2]int64{val, int64(ind)}
-//			productsTop = append(productsTop, arr)
-//		}
-//	}
-//
-//	sort.Slice(productsTop, func(i, j int) bool {
-//		return productsTop[i][0] > productsTop[j][0]
-//	})
-//
-//	listProducts:=make([]string,0)
-//	l:=len(productsTop)
-//	var i int64
-//	for i=0;i< min(5,int64(l));i++{
-//		ind:=productsTop[i][1]-1
-//		listProducts=append(listProducts,h.ProductArr[ind].Name)
-//	}
-//
-//	return listProducts
-//}
+func (h *Inmemoryimplement) TopProduct() []string{
+	currTime:=time.Now().Unix()
+	prodQuantity:=make([]int64,len(h.ProductArr)+1)
+	const timeHour=3600
+	for k,v :=range mp {
+		if currTime-k.timeInSec<=timeHour{
+			prodQuantity[k.prodId]+=v
+		}
+	}
+
+	productsTop:=make([][2]int64,0)
+
+	for ind,val:=range prodQuantity{
+		if val>0 {
+			arr := [2]int64{val, int64(ind)}
+			productsTop = append(productsTop, arr)
+		}
+	}
+
+	sort.Slice(productsTop, func(i, j int) bool {
+		return productsTop[i][0] > productsTop[j][0]
+	})
+
+	listProducts:=make([]string,0)
+	l:=len(productsTop)
+	var i int64
+	for i=0;i< min(5,int64(l));i++{
+		ind:=productsTop[i][1]-1
+		listProducts=append(listProducts,h.ProductArr[ind].Name)
+	}
+
+	return listProducts
+}
 

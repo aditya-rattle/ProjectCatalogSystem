@@ -104,6 +104,20 @@ func (mr *MockICatalogServiceMockRecorder) ShowProducts() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowProducts", reflect.TypeOf((*MockICatalogService)(nil).ShowProducts))
 }
 
+// TopProduct mocks base method.
+func (m *MockICatalogService) TopProduct() []models.Transaction {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TopProduct")
+	ret0, _ := ret[0].([]models.Transaction)
+	return ret0
+}
+
+// TopProduct indicates an expected call of TopProduct.
+func (mr *MockICatalogServiceMockRecorder) TopProduct() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TopProduct", reflect.TypeOf((*MockICatalogService)(nil).TopProduct))
+}
+
 // UpdateProduct mocks base method.
 func (m *MockICatalogService) UpdateProduct(arg0 models.DbProduct, arg1 int64) error {
 	m.ctrl.T.Helper()

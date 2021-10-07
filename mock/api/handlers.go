@@ -94,6 +94,18 @@ func (mr *MockIhandlersMockRecorder) ShowProducts(w, r interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ShowProducts", reflect.TypeOf((*MockIhandlers)(nil).ShowProducts), w, r)
 }
 
+// TopProduct mocks base method.
+func (m *MockIhandlers) TopProduct(w http.ResponseWriter, r *http.Request) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "TopProduct", w, r)
+}
+
+// TopProduct indicates an expected call of TopProduct.
+func (mr *MockIhandlersMockRecorder) TopProduct(w, r interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TopProduct", reflect.TypeOf((*MockIhandlers)(nil).TopProduct), w, r)
+}
+
 // UpdateProduct mocks base method.
 func (m *MockIhandlers) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	m.ctrl.T.Helper()

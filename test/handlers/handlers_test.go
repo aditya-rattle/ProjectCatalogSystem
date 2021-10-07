@@ -322,3 +322,29 @@ func TestBuyProductWhenNotAvailable(t *testing.T){
 	assert.Equal(t, StringResponse,str)
 	assert.Equal(t, 200,rr.Code)
 }
+
+func TestTop5ProductsWhenEmpty(t *testing.T){
+	ctrl:=gomock.NewController(t)
+	defer ctrl.Finish()
+	//id:=2
+	rr := httptest.NewRecorder()
+	r := mux.NewRouter()
+	//inputProd:=models.UserProduct{Name:"Laptop", Price: 200000, Quantity: 100, Description: "Tool"}
+
+	BodyProduct := []byte(``)
+
+	outputProduct:=[]models.Transaction{}
+
+	req, _ := http.NewRequest("GET", "/api/top5/product", bytes.NewBuffer(BodyProduct))
+	MockServices :=mock_services.NewMockICatalogService(ctrl)
+	MockServices.EXPECT().TopProduct().Return(outputProduct)
+	ProductController:=api.CatalogController{CatalogService: MockServices}
+
+	r.HandleFunc("/api/top5/product",ProductController.TopProduct ).Methods("GET")
+	r.ServeHTTP(rr, req)
+	var StringResponse string
+	StringResponse=`"There are no purchases in the last one hour."`
+	str:=strings.TrimSpace(rr.Body.String())
+	assert.Equal(t, StringResponse,str)
+	assert.Equal(t, 200,rr.Code)
+}

@@ -5,13 +5,16 @@ import (
 	"fmt"
 	"github.com/aditya/ProjectCatalog/models"
 	"github.com/jinzhu/gorm"
+	"time"
 )
 
 type DbImplementation struct {
 	Db *gorm.DB
+	Dbsales *gorm.DB
 }
 
-//Add Product
+// implementation of create product function
+
 func (h *DbImplementation) CreateProduct(product models.UserProduct) error {
 	//handle error
 	dbprod:=models.DbProduct{
@@ -27,7 +30,8 @@ func (h *DbImplementation) CreateProduct(product models.UserProduct) error {
 	return nil
 }
 
-//Available Product
+// implementation of show products function
+
 func (h *DbImplementation) ShowProducts() []models.DbProduct {
 	var allProd []models.DbProduct
 
@@ -35,15 +39,16 @@ func (h *DbImplementation) ShowProducts() []models.DbProduct {
 	return allProd
 }
 
-//Get Product By Id
+// implementation of show product by id function
+
 func (h *DbImplementation) ShowProductById(productId int64) models.DbProduct {
 	var product models.DbProduct
 	h.Db.First(&product, productId)
 	return product
 }
 
+// implementation of buy product function
 
-//Buy Product
 func (h *DbImplementation) BuyProduct(productId, productQuantity int64) error {
 	var product models.DbProduct
 	h.Db.First(&product,productId)
@@ -53,9 +58,21 @@ func (h *DbImplementation) BuyProduct(productId, productQuantity int64) error {
 
 	if product.Quantity>=productQuantity {
 		product.Quantity = product.Quantity - productQuantity
+
+		productSales:=models.Transaction{
+			Name:product.Name,
+			Quantity:productQuantity,
+			OrderTime: time.Now(),
+		}
+
+		h.Dbsales.NewRecord(productSales)
+		h.Dbsales.Create(&productSales)
+
 		h.Db.Save(&product)
+
 		return nil
 	}
+
 
 	return errors.New("item is  not sufficient to fulfil request")
 
@@ -64,7 +81,8 @@ func (h *DbImplementation) BuyProduct(productId, productQuantity int64) error {
 
 
 
-// Update the Product
+// implementation of update product function
+
 func (h *DbImplementation) UpdateProduct( updatedProduct models.DbProduct , productId int64) error {
 	var product models.DbProduct
 	h.Db.First(&product,productId)
@@ -95,6 +113,8 @@ func (h *DbImplementation) UpdateProduct( updatedProduct models.DbProduct , prod
 
 
 }
+// implementation of delete product function
+
 
 func (h *DbImplementation) DeleteProduct(productId int64) error {
 	var product models.DbProduct
@@ -107,6 +127,28 @@ func (h *DbImplementation) DeleteProduct(productId int64) error {
 	return nil
 }
 
+// implementation of top 5 products in last hour  function
 
+func (h *DbImplementation) TopProduct() []models.Transaction {
+	var BestSellers []models.Transaction
+	sqlStr := "SELECT name, SUM(quantity) AS Total FROM (SELECT name, quantity FROM transactions WHERE order_time > NOW() - INTERVAL '1 hour') Temp GROUP BY name ORDER BY Total DESC LIMIT 5"
+	rows, err := h.Dbsales.Raw(sqlStr).Rows()
 
+	if err != nil {
+		fmt.Println("hello")
+		return BestSellers
+	}
+
+	for rows.Next() {
+		var p models.Transaction
+		var name string
+		var quantity int64
+		_ = rows.Scan(&name, &quantity)
+		p.Name = name
+		p.Quantity=quantity
+		BestSellers = append(BestSellers, p)
+	}
+	return BestSellers
+
+}
 

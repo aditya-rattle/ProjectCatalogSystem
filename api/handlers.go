@@ -17,6 +17,7 @@ type Ihandlers interface {
 	UpdateProduct(w http.ResponseWriter, r *http.Request)
 	BuyProduct(w http.ResponseWriter, r *http.Request)
 	DeleteProduct(w http.ResponseWriter, r *http.Request)
+	TopProduct(w http.ResponseWriter, r *http.Request)
 }
 
 type CatalogController struct{
@@ -111,16 +112,16 @@ func (h *CatalogController) DeleteProduct(w http.ResponseWriter, r *http.Request
 
 
 }
-//func (h *CatalogController) TopProduct(w http.ResponseWriter, r *http.Request){
-//	headerJson(w,r)
-//
-//	listOfProducts:=h.CatalogService.TopProduct()
-//
-//	if len(listOfProducts)==0{
-//		json.NewEncoder(w).Encode("There are no purchases in the last one hour.")
-//		return
-//	}
-//
-//	json.NewEncoder(w).Encode(listOfProducts)
-//
-//}
+func (h *CatalogController) TopProduct(w http.ResponseWriter, r *http.Request){
+	headerJson(w,r)
+
+	listOfProducts:=h.CatalogService.TopProduct()
+
+	if len(listOfProducts)==0{
+		json.NewEncoder(w).Encode("There are no purchases in the last one hour.")
+		return
+	}
+
+	json.NewEncoder(w).Encode(listOfProducts)
+
+}

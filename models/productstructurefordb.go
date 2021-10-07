@@ -1,6 +1,9 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+	"time"
+)
 
 type DbProduct struct {
 	gorm.Model
@@ -15,4 +18,10 @@ type UserProduct struct{
 	Price       int64 `json:"price"`
 	Quantity    int64 `json:"quantity"`
 	Description string `json:"description"`
+}
+
+type Transaction struct{
+	Name        string `json:"name"`
+	Quantity    int64 `json:"quantity"`
+	OrderTime   time.Time  `json:"ordertime"`
 }

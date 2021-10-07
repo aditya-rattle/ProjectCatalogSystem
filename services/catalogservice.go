@@ -9,5 +9,5 @@ type ICatalogService interface{
 	UpdateProduct(models.DbProduct, int64) error
 	BuyProduct(productId int64, productQuantity int64) error
 	DeleteProduct(productId int64) error
-	//TopProduct() []string
+	TopProduct() []models.Transaction
 }
