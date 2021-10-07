@@ -9,9 +9,9 @@ import (
 	"net/http"
 )
 
-func Routes(db1 *gorm.DB){
+func Routes(db1 *gorm.DB) {
 	r := mux.NewRouter()
-	catalogService := &implementation.DbImplementation{Db: db1,Dbsales:db1}
+	catalogService := &implementation.DbImplementation{Db: db1, Dbsales: db1}
 	catalogController := CatalogController{CatalogService: catalogService}
 	r.HandleFunc("/api/create/product", catalogController.CreateProduct).Methods("POST")
 	r.HandleFunc("/api/show/product", catalogController.ShowProducts).Methods("GET")
@@ -21,10 +21,7 @@ func Routes(db1 *gorm.DB){
 	r.HandleFunc("/api/delete/product/{id}", catalogController.DeleteProduct).Methods("DELETE")
 	r.HandleFunc("/api/top5/product", catalogController.TopProduct).Methods("GET")
 
-
 	handler := cors.Default().Handler(r)
 
 	log.Fatal(http.ListenAndServe(":8080", handler))
 }
-
-

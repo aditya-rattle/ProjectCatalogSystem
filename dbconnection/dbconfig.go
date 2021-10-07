@@ -5,12 +5,12 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func Dbconfiguration() *gorm.DB{
-	var db1 *gorm.DB
+func Dbconfiguration() *gorm.DB {
+	var db *gorm.DB
 	var err error
 	dbURI := fmt.Sprintf("host=localhost user=postgres dbname=postgres sslmode=disable password=aditya port=5432")
 
-	db1, err = gorm.Open("postgres", dbURI)
+	db, err = gorm.Open("postgres", dbURI)
 
 	if err != nil {
 		panic(err)
@@ -18,5 +18,5 @@ func Dbconfiguration() *gorm.DB{
 		fmt.Println("Connected to database successfully")
 	}
 
-	return db1
+	return db
 }

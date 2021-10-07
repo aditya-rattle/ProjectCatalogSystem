@@ -9,7 +9,7 @@ import (
 )
 
 type DbImplementation struct {
-	Db *gorm.DB
+	Db      *gorm.DB
 	Dbsales *gorm.DB
 }
 
@@ -17,11 +17,11 @@ type DbImplementation struct {
 
 func (h *DbImplementation) CreateProduct(product models.UserProduct) error {
 	//handle error
-	dbprod:=models.DbProduct{
-		Name:product.Name,
-		Price: product.Price,
-		Quantity: product.Quantity,
-		Description:product.Description,
+	dbprod := models.DbProduct{
+		Name:        product.Name,
+		Price:       product.Price,
+		Quantity:    product.Quantity,
+		Description: product.Description,
 	}
 	fmt.Println(dbprod)
 
@@ -51,17 +51,17 @@ func (h *DbImplementation) ShowProductById(productId int64) models.DbProduct {
 
 func (h *DbImplementation) BuyProduct(productId, productQuantity int64) error {
 	var product models.DbProduct
-	h.Db.First(&product,productId)
-	if product.Name==""{
+	h.Db.First(&product, productId)
+	if product.Name == "" {
 		return errors.New("item not found")
 	}
 
-	if product.Quantity>=productQuantity {
+	if product.Quantity >= productQuantity {
 		product.Quantity = product.Quantity - productQuantity
 
-		productSales:=models.Transaction{
-			Name:product.Name,
-			Quantity:productQuantity,
+		productSales := models.Transaction{
+			Name:      product.Name,
+			Quantity:  productQuantity,
 			OrderTime: time.Now(),
 		}
 
@@ -73,53 +73,47 @@ func (h *DbImplementation) BuyProduct(productId, productQuantity int64) error {
 		return nil
 	}
 
-
 	return errors.New("item is  not sufficient to fulfil request")
 
 }
 
-
-
-
 // implementation of update product function
 
-func (h *DbImplementation) UpdateProduct( updatedProduct models.DbProduct , productId int64) error {
+func (h *DbImplementation) UpdateProduct(updatedProduct models.DbProduct, productId int64) error {
 	var product models.DbProduct
-	h.Db.First(&product,productId)
+	h.Db.First(&product, productId)
 
-	if product.Name==""{
+	if product.Name == "" {
 		return errors.New("product not found")
 	}
 
-	if updatedProduct.Quantity<0{
-		return errors.New("quantity is invalid")
+	if updatedProduct.Quantity < 0 {
+		return errors.New("quantity of the product is invalid")
 	}
 
-	if updatedProduct.Price<0{
+	if updatedProduct.Price < 0 {
 		return errors.New("price of the product is invalid")
 	}
 
+	if updatedProduct.Price != 0 {
+		product.Price = updatedProduct.Price
+	}
+	if updatedProduct.Quantity != 0 {
+		initialQuantity := product.Quantity
+		product.Quantity = initialQuantity + updatedProduct.Quantity
+	}
 
-		if updatedProduct.Price!=0{
-			product.Price=updatedProduct.Price
-		}
-		if updatedProduct.Quantity!=0{
-			initialQuantity:=product.Quantity
-			product.Quantity = initialQuantity + updatedProduct.Quantity
-		}
-
-		h.Db.Save(&product)
-		return nil
-
+	h.Db.Save(&product)
+	return nil
 
 }
-// implementation of delete product function
 
+// implementation of delete product function
 
 func (h *DbImplementation) DeleteProduct(productId int64) error {
 	var product models.DbProduct
-	h.Db.First(&product,productId)
-	if product.Name==""{
+	h.Db.First(&product, productId)
+	if product.Name == "" {
 		return errors.New("some error")
 	}
 
@@ -135,7 +129,6 @@ func (h *DbImplementation) TopProduct() []models.Transaction {
 	rows, err := h.Dbsales.Raw(sqlStr).Rows()
 
 	if err != nil {
-		fmt.Println("hello")
 		return BestSellers
 	}
 
@@ -143,12 +136,14 @@ func (h *DbImplementation) TopProduct() []models.Transaction {
 		var p models.Transaction
 		var name string
 		var quantity int64
-		_ = rows.Scan(&name, &quantity)
+		err:= rows.Scan(&name, &quantity)
+		if err!=nil{
+			return BestSellers
+		}
 		p.Name = name
-		p.Quantity=quantity
+		p.Quantity = quantity
 		BestSellers = append(BestSellers, p)
 	}
 	return BestSellers
 
 }
-

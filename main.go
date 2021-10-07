@@ -7,11 +7,10 @@ import (
 	_ "github.com/lib/pq"
 )
 
-
 func main() {
-	db1:=dbconnection.Dbconfiguration()
-	db1.AutoMigrate(&models.DbProduct{})
-	db1.AutoMigrate(&models.Transaction{})
-	api.Routes(db1)
-	defer db1.Close()
+	db := dbconnection.Dbconfiguration()
+	db.AutoMigrate(&models.DbProduct{})
+	db.AutoMigrate(&models.Transaction{})
+	api.Routes(db)
+	defer db.Close()
 }

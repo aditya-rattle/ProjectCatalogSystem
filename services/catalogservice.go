@@ -2,7 +2,7 @@ package services
 
 import "github.com/aditya/ProjectCatalog/models"
 
-type ICatalogService interface{
+type ICatalogService interface {
 	CreateProduct(product models.UserProduct) error
 	ShowProducts() []models.DbProduct
 	ShowProductById(productId int64) models.DbProduct
